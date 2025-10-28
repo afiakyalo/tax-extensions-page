@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Federal Tax Extension Matrix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2563eb;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        .alert {
+            background: #dbeafe;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .alert strong {
+            color: #1e40af;
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .filter-btn:hover {
+            background: #d1d5db;
+        }
+        .filter-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .card-header .entity {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .extension-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .extension-badge .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .extension-badge .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        .section {
+            display: flex;
+            gap: 15px;
+        }
+        .section-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .info-box {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .info-box p {
+            font-size: 13px;
+            color: #4b5563;
+            margin: 5px 0;
+        }
+        .info-box strong {
+            color: #1f2937;
+        }
+        .example {
+            color: #2563eb;
+            font-style: italic;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .penalty-box {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .penalty-file {
+            background: #fee2e2;
+        }
+        .penalty-pay {
+            background: #fed7aa;
+        }
+        .penalty-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .penalty-file .penalty-title {
+            color: #991b1b;
+        }
+        .penalty-pay .penalty-title {
+            color: #9a3412;
+        }
+        .penalty-file .penalty-text {
+            color: #7f1d1d;
+            font-size: 13px;
+        }
+        .penalty-pay .penalty-text {
+            color: #7c2d12;
+            font-size: 13px;
+        }
+        .reminders {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .reminders h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+        .reminder-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .reminder-item {
+            display: flex;
+            gap: 10px;
+            font-size: 13px;
+            color: #4b5563;
+        }
+        .bullet {
+            width: 8px;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 11px;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .card-body, .reminder-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Federal Tax Extension Matrix</h1>
+            <p class="subtitle">Due dates, extension periods, and penalty structures for major tax forms</p>
+            
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterForms('all')">All Forms</button>
+                <button class="filter-btn" onclick="filterForms('1120')">1120</button>
+                <button class="filter-btn" onclick="filterForms('1120-S')">1120-S</button>
+                <button class="filter-btn" onclick="filterForms('1065')">1065</button>
+                <button class="filter-btn" onclick="filterForms('1041')">1041</button>
+                <button class="filter-btn" onclick="filterForms('990')">990</button>
+                <button class="filter-btn" onclick="filterForms('1040')">1040</button>
+            </div>
+
+            <div class="alert">
+                <strong>⚠️ Important:</strong> Extensions provide more time to FILE, not to PAY. Payment is still due by the original deadline to avoid penalties.
+            </div>
+        </div>
+
+        <div class="card" data-form="1120">
+            <div class="card-header">
+                <div>
+                    <h2>Form 1120</h2>
+                    <div class="entity">C Corporation</div>
+                </div>
+                <div class="extension-badge">
+                    <div class="label">Extension Period</div>
+                    <div class="value">6 mo</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">📅 Due Dates</div>
+                        <div class="info-box">
+                            <p><strong>Original:</strong> 15th day of 4th month</p>
+                            <p><strong>Extended:</strong> 15th day of 10th month</p>
+                            <p class="example">Dec 31 year-end: Apr 15 → Oct 15</p>
+                        </div>
+                        <div class="info-box" style="margin-top: 15px;">
+                            <div class="section-title">Extension Notes</div>
+                            <p>Automatic 6-month extension with Form 7004</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">💰 Penalties</div>
+                        <div class="penalty-box penalty-file">
+                            <div class="penalty-title">Failure to File</div>
+                            <div class="penalty-text">$220 per month per shareholder (min)</div>
+                        </div>
+                        <div class="penalty-box penalty-pay">
+                            <div class="penalty-title">Failure to Pay</div>
+                            <div class="penalty-text">0.5% per month of unpaid tax</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-form="1120-S">
+            <div class="card-header">
+                <div>
+                    <h2>Form 1120-S</h2>
+                    <div class="entity">S Corporation</div>
+                </div>
+                <div class="extension-badge">
+                    <div class="label">Extension Period</div>
+                    <div class="value">6 mo</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">📅 Due Dates</div>
+                        <div class="info-box">
+                            <p><strong>Original:</strong> 15th day of 3rd month</p>
+                            <p><strong>Extended:</strong> 15th day of 9th month</p>
+                            <p class="example">Dec 31 year-end: Mar 15 → Sep 15</p>
+                        </div>
+                        <div class="info-box" style="margin-top: 15px;">
+                            <div class="section-title">Extension Notes</div>
+                            <p>Automatic 6-month extension with Form 7004</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">💰 Penalties</div>
+                        <div class="penalty-box penalty-file">
+                            <div class="penalty-title">Failure to File</div>
+                            <div class="penalty-text">$220 per month per shareholder</div>
+                        </div>
+                        <div class="penalty-box penalty-pay">
+                            <div class="penalty-title">Failure to Pay</div>
+                            <div class="penalty-text">Pass-through entity - penalties to shareholders</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-form="1065">
+            <div class="card-header">
+                <div>
+                    <h2>Form 1065</h2>
+                    <div class="entity">Partnership</div>
+                </div>
+                <div class="extension-badge">
+                    <div class="label">Extension Period</div>
+                    <div class="value">6 mo</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">📅 Due Dates</div>
+                        <div class="info-box">
+                            <p><strong>Original:</strong> 15th day of 3rd month</p>
+                            <p><strong>Extended:</strong> 15th day of 9th month</p>
+                            <p class="example">Dec 31 year-end: Mar 15 → Sep 15</p>
+                        </div>
+                        <div class="info-box" style="margin-top: 15px;">
+                            <div class="section-title">Extension Notes</div>
+                            <p>Automatic 6-month extension with Form 7004</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">💰 Penalties</div>
+                        <div class="penalty-box penalty-file">
+                            <div class="penalty-title">Failure to File</div>
+                            <div class="penalty-text">$220 per month per partner</div>
+                        </div>
+                        <div class="penalty-box penalty-pay">
+                            <div class="penalty-title">Failure to Pay</div>
+                            <div class="penalty-text">Pass-through entity - penalties to partners</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-form="1041">
+            <div class="card-header">
+                <div>
+                    <h2>Form 1041</h2>
+                    <div class="entity">Estate/Trust</div>
+                </div>
+                <div class="extension-badge">
+                    <div class="label">Extension Period</div>
+                    <div class="value">5.5 mo</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">📅 Due Dates</div>
+                        <div class="info-box">
+                            <p><strong>Original:</strong> 15th day of 4th month</p>
+                            <p><strong>Extended:</strong> 30th day of 9th month</p>
+                            <p class="example">Dec 31 year-end: Apr 15 → Sep 30</p>
+                        </div>
+                        <div class="info-box" style="margin-top: 15px;">
+                            <div class="section-title">Extension Notes</div>
+                            <p>5.5-month extension with Form 7004</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">💰 Penalties</div>
+                        <div class="penalty-box penalty-file">
+                            <div class="penalty-title">Failure to File</div>
+                            <div class="penalty-text">$220 per month (or 5% of unpaid tax)</div>
+                        </div>
+                        <div class="penalty-box penalty-pay">
+                            <div class="penalty-title">Failure to Pay</div>
+                            <div class="penalty-text">0.5% per month of unpaid tax</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-form="990">
+            <div class="card-header">
+                <div>
+                    <h2>Form 990</h2>
+                    <div class="entity">Tax-Exempt Organization</div>
+                </div>
+                <div class="extension-badge">
+                    <div class="label">Extension Period</div>
+                    <div class="value">6 mo</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">📅 Due Dates</div>
+                        <div class="info-box">
+                            <p><strong>Original:</strong> 15th day of 5th month</p>
+                            <p><strong>Extended:</strong> 15th day of 11th month</p>
+                            <p class="example">Dec 31 year-end: May 15 → Nov 15</p>
+                        </div>
+                        <div class="info-box" style="margin-top: 15px;">
+                            <div class="section-title">Extension Notes</div>
+                            <p>Automatic 6-month extension with Form 8868</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">💰 Penalties</div>
+                        <div class="penalty-box penalty-file">
+                            <div class="penalty-title">Failure to File</div>
+                            <div class="penalty-text">$20/day up to $10,500 (larger orgs: $105/day up to $52,500)</div>
+                        </div>
+                        <div class="penalty-box penalty-pay">
+                            <div class="penalty-title">Failure to Pay</div>
+                            <div class="penalty-text">N/A - no tax typically due</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-form="1040">
+            <div class="card-header">
+                <div>
+                    <h2>Form 1040</h2>
+                    <div class="entity">Individual</div>
+                </div>
+                <div class="extension-badge">
+                    <div class="label">Extension Period</div>
+                    <div class="value">6 mo</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">📅 Due Dates</div>
+                        <div class="info-box">
+                            <p><strong>Original:</strong> April 15</p>
+                            <p><strong>Extended:</strong> October 15</p>
+                            <p class="example">Apr 15 → Oct 15</p>
+                        </div>
+                        <div class="info-box" style="margin-top: 15px;">
+                            <div class="section-title">Extension Notes</div>
+                            <p>Automatic extension with Form 4868 or payment</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div style="flex: 1;">
+                        <div class="section-title">💰 Penalties</div>
+                        <div class="penalty-box penalty-file">
+                            <div class="penalty-title">Failure to File</div>
+                            <div class="penalty-text">5% per month of unpaid tax (max 25%)</div>
+                        </div>
+                        <div class="penalty-box penalty-pay">
+                            <div class="penalty-title">Failure to Pay</div>
+                            <div class="penalty-text">0.5% per month of unpaid tax</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="reminders">
+            <h3>Key Reminders</h3>
+            <div class="reminder-grid">
+                <div class="reminder-item">
+                    <div class="bullet"></div>
+                    <p>Extension forms must be filed by the original due date</p>
+                </div>
+                <div class="reminder-item">
+                    <div class="bullet"></div>
+                    <p>Pay estimated tax by original due date to avoid interest charges</p>
+                </div>
+                <div class="reminder-item">
+                    <div class="bullet"></div>
+                    <p>Penalties may be waived for reasonable cause</p>
+                </div>
+                <div class="reminder-item">
+                    <div class="bullet"></div>
+                    <p>Interest accrues on unpaid taxes from original due date</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            This matrix covers federal tax extensions. State filing requirements may vary. Consult a tax professional for specific situations.
+        </div>
+    </div>
+
+    <script>
+        function filterForms(formType) {
+            const cards = document.querySelectorAll('.card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                if (formType === 'all' || card.dataset.form === formType) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
